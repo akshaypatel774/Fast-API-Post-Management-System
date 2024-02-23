@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from fastapi import status, HTTPException, Depends, APIRouter
 from typing import Optional, List
 
@@ -7,13 +8,14 @@ from ..database import get_db
 
 routes = APIRouter(prefix="/posts", tags=['Users'])
 
-@routes.get("/", response_model=List[schemas.PostResponse])
+@routes.get("/", response_model=List[schemas.PostOutput])
 async def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 5, skip: int = 0, search: Optional[str] = ""):
     # cur.execute(""" SELECT * FROM posts """)
     # posts = cur.fetchall()
 
-    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    # posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
+    posts = db.query(models.Post, func.count(models.Star.post_id).label("stars")).join(models.Star, models.Star.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
     # User gets just his own posts
     # posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all()
 
@@ -37,13 +39,13 @@ async def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), 
         return {"message": "No post created"}
 
 
-@routes.get('/{id}', response_model=schemas.PostResponse)
+@routes.get('/{id}', response_model=schemas.PostOutput)
 async def get_posts(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
     # cur.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
     # post = cur.fetchone()
 
-    post = db.query(models.Post).filter(models.Post.id == id).first()
-
+    # post = db.query(models.Post).filter(models.Post.id == id).first()
+    post = db.query(models.Post, func.count(models.Star.post_id).label("stars")).join(models.Star, models.Star.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id: {id} does not exist!")
     return post

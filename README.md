@@ -19,7 +19,7 @@ git clone https://github.com/akshaypatel774/Post-Management-System.git
 ```
 pip install -r requirements.txt
 ```
-3. Set up a PostgreSQL database and update the database connection settings in the configuration file. (update the .env file)
+3. Set up a PostgreSQL database and update the database connection settings in the configuration file. (Create `.env` file with all the required variables from `config.py`)
 4. Run the application.
 ```
 uvicorn main:app --reload
