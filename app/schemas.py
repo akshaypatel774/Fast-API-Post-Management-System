@@ -18,9 +18,6 @@ class UserResponse(BaseModel):
     email: EmailStr
     created_at: datetime
 
-    # class Config(): # It might be a sqlalchemy model so we need to convert it to a regular pydantic model, if it is.
-    #     orm_mode = True
-
 
 class PostResponse(PostBase):
     id: int
@@ -28,9 +25,6 @@ class PostResponse(PostBase):
     owner_id: int
     owner: UserResponse
     
-    # class Config(): 
-    #     orm_mode = True
-
 
 class PostOutput(BaseModel):
     Post: PostResponse

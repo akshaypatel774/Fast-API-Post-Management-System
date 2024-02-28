@@ -19,31 +19,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-
-
-
-
-
-
-
-
-
-# Connect without SQLAlchemy
-import psycopg
-from psycopg.rows import dict_row
-import time
-
-# # host='localhost', database='FastAPI', user='postgres', password='pops'
-# while True:
-#     try:
-#         conn = psycopg.connect("dbname=FastAPI user=postgres password=pops") # Use env varaible later on
-#         cur = conn.cursor(row_factory=dict_row)
-#         print("Database connected!")
-#         break
-
-#     except Exception as e:
-#         print("Connection to database failed")
-#         print("Error", e)
-#         time.sleep(3)       

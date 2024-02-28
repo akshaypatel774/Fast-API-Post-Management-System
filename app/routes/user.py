@@ -1,8 +1,8 @@
 from .. import schemas, models, utils
-from .. database import engine, get_db
+from .. database import get_db
 from sqlalchemy.orm import Session
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from typing import Optional, List
+from fastapi import status, HTTPException, Depends, APIRouter
+
 
 routes = APIRouter(prefix="/users", tags=['Posts'])
 
@@ -12,7 +12,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     hashed_password = utils.hash(user.password)
     user.password = hashed_password
 
-    new_user = models.User(**user.dict()) #...............................................................
+    new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
