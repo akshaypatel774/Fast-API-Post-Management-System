@@ -34,7 +34,7 @@ def test_delete_star_non_exist(authorised_client, test_posts):
 
 def test_star_post_non_exist(authorised_client, test_posts):
     res = authorised_client.post(
-        "/star/", json={"post_id": 80000, "dir": 1})
+        "/star/", json={"post_id": 0000, "dir": 1})
     assert res.status_code == 404
 
 
