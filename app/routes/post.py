@@ -9,7 +9,7 @@ from ..database import get_db
 routes = APIRouter(prefix="/posts", tags=['Users'])
 
 @routes.get("/", response_model=List[schemas.PostOutput])
-async def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 5, skip: int = 0, search: Optional[str] = ""):
+def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 5, skip: int = 0, search: Optional[str] = ""):
 
     posts = db.query(models.Post, func.count(models.Star.post_id).label("stars")).join(models.Star, models.Star.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
@@ -17,7 +17,7 @@ async def get_posts(db: Session = Depends(get_db), current_user: int = Depends(o
 
 
 @routes.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
-async def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
 
     new_post = models.Post(owner_id=current_user.id,**post.dict())
     db.add(new_post)
@@ -31,7 +31,7 @@ async def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), 
 
 
 @routes.get('/{id}', response_model=schemas.PostOutput)
-async def get_posts(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
+def get_posts(id: int, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
 
     post = db.query(models.Post, func.count(models.Star.post_id).label("stars")).join(models.Star, models.Star.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
     if not post:
@@ -40,7 +40,7 @@ async def get_posts(id: int, db: Session = Depends(get_db), user_id: int = Depen
 
 
 @routes.put('/{id}', response_model=schemas.PostResponse)
-async def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
 
     post = db.query(models.Post).filter(models.Post.id == id)
     current_post = post.first()
@@ -59,7 +59,7 @@ async def update_post(id: int, updated_post: schemas.PostCreate, db: Session = D
 
 
 @routes.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
 
     post = db.query(models.Post).filter(models.Post.id == id)
 

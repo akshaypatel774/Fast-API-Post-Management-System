@@ -22,5 +22,5 @@ app.include_router(auth.routes)
 app.include_router(star.routes)
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Hello World!!"}

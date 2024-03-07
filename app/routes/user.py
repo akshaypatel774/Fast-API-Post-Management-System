@@ -7,7 +7,7 @@ from fastapi import status, HTTPException, Depends, APIRouter
 routes = APIRouter(prefix="/users", tags=['Posts'])
 
 @routes.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     hashed_password = utils.hash(user.password)
     user.password = hashed_password
@@ -21,7 +21,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @routes.get("/{id}", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
-async def get_user(id: int, db: Session = Depends(get_db)):
+def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
 
     if not user:
